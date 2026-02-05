@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Related Articles</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .article { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        .url { color: blue; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Testing Related Articles API</h1>
+    <button onclick="testAPI()">Test API</button>
+    <div id="results"></div>
+
+    <script>
+        async function testAPI() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/find-related-articles', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ summary: 'Machine learning for environmental data analysis' })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = `<h2>Found ${data.articles.length} articles:</h2>`;
+                    data.articles.forEach((article, i) => {
+                        html += `
+                            <div class="article">
+                                <h3>${article.title}</h3>
+                                <p><strong>Authors:</strong> ${article.authors ? article.authors.join(', ') : 'N/A'}</p>
+                                <p><strong>Journal:</strong> ${article.journal || 'N/A'}</p>
+                                <p><strong>Date:</strong> ${article.date || 'N/A'}</p>
+                                <p><strong>Citations:</strong> ${article.citations || 'N/A'}</p>
+                                <p><strong>URL:</strong> ${article.url ? `<a href="${article.url}" target="_blank" class="url">${article.url}</a>` : 'No URL'}</p>
+                                <p>${article.description}</p>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('results').innerHTML = html;
+                } else {
+                    document.getElementById('results').innerHTML = `<p>Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('results').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
