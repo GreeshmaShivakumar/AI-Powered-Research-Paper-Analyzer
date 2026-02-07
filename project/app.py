@@ -7,13 +7,20 @@ import base64
 import re
 import random
 import hashlib
+import os
 from typing import Optional, Dict, Any
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import tempfile
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # API Configuration - Only Gemini API needed now
-GEMINI_API_KEY = "REDACTED_API_KEY"
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY not found in environment variables. Please check your .env file.")
 
 # API URLs - Updated for Gemini 2.0 Flash
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
